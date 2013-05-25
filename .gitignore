@@ -1,0 +1,7 @@
+node_modules
+www-root/components
+www-root/styles
+www-root/scripts
+www-root/bower_components
+npm-debug.log
+CustomDashboard*.coffee

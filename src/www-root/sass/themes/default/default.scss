@@ -1,0 +1,397 @@
+@import 'compass/reset';
+@import 'compass/css3';
+
+$cell-default-color: #eeeeee;
+$cell-default-border-color: darken($cell-default-color, 20%);
+$cell-default-header-background-color: rgb(47, 149, 205);
+$cell-default-body-background-color: lighten($cell-default-color, 50%);
+$cell-default-footer-background-color: $cell-default-color;
+$cell-default-header-foreground-color: #ffffff;
+
+$cell-latest-color: #2fee3a;
+$cell-latest-border-color: darken($cell-latest-color, 20%);
+$cell-latest-header-background-color: $cell-latest-color;
+$cell-latest-body-background-color: lighten($cell-latest-color, 50%);
+$cell-latest-footer-background-color: $cell-latest-color;
+$cell-latest-header-foreground-color: #000000;
+
+$cell-update-color: #ee573e;
+$cell-update-border-color: darken($cell-update-color, 20%);
+$cell-update-header-background-color: $cell-update-color;
+$cell-update-body-background-color: lighten($cell-update-color, 50%);
+$cell-update-footer-background-color: $cell-update-color;
+$cell-update-header-foreground-color: #000000;
+
+$cell-height: 150px;
+$cell-width: 300px;
+$cell-header-height: 33px;
+$cell-footer-height: 23px;
+
+body {
+  font-family: 'Roboto Slab', serif;
+  background-color: rgb(234,237,241);
+
+  > header {
+    margin-left: 20px;
+    color: darken(rgb(234,237,241), 10%);
+    top: 0;
+    right: 0;
+    position: fixed;
+    font-size: 1.2em;
+    margin-right: 20px;
+    h1 {
+      margin: 0;
+    }
+  }
+
+  > footer {
+    @include background(linear-gradient(lighten(#eeeeee, 5%), darken(#eeeeee, 5%)));
+    border-top: 1px solid darken(#eeeeee, 20%);
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    font-size: 0.7em;
+    text-align: right;
+
+    &.server-connected-state {
+      border-color: darken(#a1ff8f, 20%);
+      @include background(linear-gradient(lighten(#a1ff8f, 5%), darken(#a1ff8f, 20%)));
+    }
+
+    &.server-disconnected-state {
+      border-color: darken(#ff5d5b, 20%);
+      @include background(linear-gradient(lighten(#ff5d5b, 5%), darken(#ff5d5b, 20%)));
+    }
+
+    &.server-connecting-state,
+    &.server-reconnecting-state {
+      border-color: darken(#ffa673, 20%);
+      @include background(linear-gradient(lighten(#ffa673, 5%), darken(#ffa673, 20%)));
+    }
+
+    &.server-failed-state,
+    &.server-refailed-state {
+      border-color: darken(#ff4eb0, 20%);
+      @include background(linear-gradient(lighten(#ff4eb0, 5%), darken(#ff4eb0, 20%)));
+    }
+
+    > div {
+      margin: 0 30px 0 30px;
+
+      span.state {
+        float: left;
+      }
+
+      span.value {
+        @include inline-block;
+        width: 20px;
+        padding: 0 1px 0 0;
+        vertical-align: top;
+      }
+
+      > ul {
+        @include background(linear-gradient(lighten(#eeeeee, 5%), darken(#eeeeee, 5%)));
+        position: absolute;
+        top: -113px;
+        padding: 10px;
+        list-style-type: none;
+        text-align: left;
+        overflow-x: hidden;
+        height: 81px;
+        width: 200px;
+
+        &.server-connected-state {
+          border-color: darken(#a1ff8f, 20%);
+          @include background(linear-gradient(lighten(#a1ff8f, 5%), darken(#a1ff8f, 20%)));
+        }
+
+        &.server-disconnected-state {
+          border-color: darken(#ff5d5b, 20%);
+          @include background(linear-gradient(lighten(#ff5d5b, 5%), darken(#ff5d5b, 20%)));
+        }
+
+        &.server-connecting-state,
+        &.server-reconnecting-state {
+          border-color: darken(#ffa673, 20%);
+          @include background(linear-gradient(lighten(#ffa673, 5%), darken(#ffa673, 20%)));
+        }
+
+        &.server-failed-state,
+        &.server-refailed-state {
+          border-color: darken(#ff4eb0, 20%);
+          @include background(linear-gradient(lighten(#ff4eb0, 5%), darken(#ff4eb0, 20%)));
+        }
+      }
+    }
+  }
+
+  > main {
+    margin-bottom: 40px;
+  }
+}
+
+// Icons
+.icon-ok {
+  color: darken($cell-latest-color, 30%);
+}
+.icon-warning-sign {
+  color: darken($cell-update-color, 30%);
+}
+
+ul.list-of-tokens {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  > li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+
+    &+li:before {
+      content: ", ";
+    }
+  }
+}
+
+.db-cluster {
+
+  .db-host-container {
+    > header {
+      @include background(linear-gradient(lighten(#eeeeee, 5%), darken(#eeeeee, 5%)));
+      height: 33px;
+      line-height: 33px;
+      padding-left: 20px;
+
+      > span {}
+
+      > abbr {
+        color: #999999;
+        font-size: 0.7em;
+        text-transform: uppercase;
+      }
+
+      .tools {
+        float: right;
+        > i {
+          line-height: $cell-header-height;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .db-host {
+    display: block;
+    z-index: 20;
+  }
+}
+
+// Icons
+span.icon-wrapper {
+  @include inline-block;
+  padding-right: 2px;
+}
+
+
+.db-cluster {
+  > header {
+    margin: 30px 0px 10px 20px;
+    font-size: 1.6em;
+
+    > span {}
+    > abbr {
+      color: #999999;
+      font-size: 0.7em;
+      text-transform: uppercase;
+    }
+  }
+  > div {
+    background-color: $cell-default-body-background-color;
+    @include box-shadow(0 8px 20px -8px rgba(0, 0, 0, 0.2));
+    border: 1px solid lighten($cell-default-border-color, 10%);
+    margin: 0px 20px 0px 20px;
+  }
+}
+
+.db-cluster .db-host {
+  overflow: hidden;
+  > header {
+    float: left;
+  }
+}
+
+.db-cluster {
+
+}
+
+.db-host {
+  &.db-host-with-error {
+    //height: 220px; // +20px
+
+    > footer.error {
+      padding: 2px 20px 2px 20px;
+      font-size: 0.7em;
+      margin-top: 8px;
+      height: 18px;
+      line-height: 18px;
+      @include background(linear-gradient(lighten($cell-default-footer-background-color, 5%), darken($cell-default-footer-background-color, 5%)));
+    }
+  }
+}
+
+.db-module {
+  header span.build {
+    background-color: chocolate;
+    border-bottom-left-radius: 20px 110%;
+    position: relative;
+    font-size: 1.4em;
+    right: 0;
+    line-height: 20px;
+    top: -$cell-header-height;
+    float: right;
+    text-align: center;
+    padding: 6px 8px;
+    width: 70px;
+  }
+
+  @include inline-block;
+  height: $cell-height;
+  width: $cell-width;
+  margin: 20px;
+
+  > section {
+
+    background-color: $cell-default-body-background-color;
+    @include box-shadow(0 8px 20px -8px rgba(0, 0, 0, 0.2));
+    border: 1px solid lighten($cell-default-border-color, 10%);
+    @include inline-block;
+    position: absolute;
+    height: $cell-height;
+    width: $cell-width;
+
+    > header {
+      @include background(linear-gradient(lighten($cell-default-header-background-color, 5%), darken($cell-default-header-background-color, 5%)));
+      color: $cell-default-header-foreground-color;
+      height: $cell-header-height;
+
+      > span {
+        display: block;
+        padding: 6px 8px;
+      }
+
+      .release {
+        @include background(linear-gradient(darken($cell-default-header-background-color, 5%), darken($cell-default-header-background-color, 15%)));
+        @include border-bottom-left-radius(20px 160%);
+        padding: 2px 8px;
+        float: right;
+        position: relative;
+        padding-left: 20px;
+        right: 0;
+        top: -$cell-header-height + 3px; // height
+        max-width: 40%;
+        white-space: nowrap;
+        text-height: $cell-header-height;
+      }
+    }
+
+    > footer {
+      @include background(linear-gradient(lighten($cell-default-footer-background-color, 5%), darken($cell-default-footer-background-color, 5%)));
+      font-size: 0.7em;
+      height: $cell-footer-height;
+      line-height: 12px;
+
+      > span {
+        display: block;
+        padding: 6px 8px;
+
+        &.settings {
+          float: right;
+          cursor: pointer;
+          line-height: 1em;
+          font-size: 1.2em;
+
+          &:hover {
+            color: blue;
+          }
+        }
+      }
+    }
+
+    > main {
+      font-size: 0.9em;
+      height: $cell-height - ($cell-header-height + $cell-footer-height + (6px));
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+
+      .metainfo {
+        positon: relative;
+
+        li {
+          margin: 0;
+          padding: 0;
+
+          &.host {
+            color: #888888;
+            font-size: 0.8em;
+            font-weight: bold;
+            position: absolute;
+            left: 8px;
+          }
+
+          &.time {
+            color: #888888;
+            font-size: 0.8em;
+            font-weight: bold;
+            position: absolute;
+            right: 8px;
+          }
+        }
+
+      }
+
+      form {
+        margin: 6px 8px 6px 8px;
+        padding-top: 32px;
+
+        > fieldset {
+          bottom: 0;
+
+          li {
+            .version {
+            }
+            .build {
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.release-availability-unknown header {
+    //@include background(linear-gradient(darken($cell-unknown-header-background-color, 5%), darken($cell-unknown-header-background-color, 15%)));
+  }
+  &.release-availability-latest header {
+    @include background(linear-gradient(darken($cell-latest-header-background-color, 5%), darken($cell-latest-header-background-color, 10%)));
+    .release {
+      @include background(linear-gradient(darken($cell-latest-header-background-color, 5%), darken($cell-latest-header-background-color, 25%)));
+    }
+  }
+  &.release-availability-update header {
+    @include background(linear-gradient(darken($cell-update-header-background-color, 5%), darken($cell-update-header-background-color, 10%)));
+    .release {
+      @include background(linear-gradient(darken($cell-update-header-background-color, 5%), darken($cell-update-header-background-color, 25%)));
+    }
+  }
+}
+
+
+@import "../../_base/animations";

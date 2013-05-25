@@ -1,0 +1,39 @@
+{
+  "name": "deployment-dashboard",
+  "version": "1.0.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "server.js",
+  "private": true,
+  "dependencies": {
+    "express": "~3.2.4",
+    "socket.io": "~0.9.14",
+    "coffee-script": "~1.6.2",
+    "request": "~2.21.0",
+    "q": "~0.9",
+    "ssh2": "~0.2.5",
+    "eventemitter2": "~0.4.11"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.3",
+    "grunt-contrib-jshint": "~0.5.0",
+    "grunt-contrib-compass": "~0.2.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "coffeelint": "~0.5.4",
+    "nodeunit": "~0.8.0",
+    "matchdep": "~0.1.2",
+    "bower": "~1.0.3",
+    "proxyquire": "~0.4.1"
+  },
+  "scripts": {
+    "test": "grunt test",
+    "server": "node_modules/.bin/coffee init.coffee"
+  },
+  "repository": "",
+  "author": "Jan Philipp <knallisworld@googlemail.com>",
+  "license": "MIT"
+}

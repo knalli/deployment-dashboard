@@ -1,0 +1,164 @@
+<!DOCTYPE>
+<html ng-app="app">
+<head>
+    <link href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,700" rel="stylesheet" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
+    <link href="styles/themes/default/default.css" rel="stylesheet" type="text/css">
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/angular-unstable/angular.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="scripts/dashboard/module.js"></script>
+    <script src="scripts/dashboard/directive/statusIcon.js"></script>
+    <script src="scripts/dashboard/directive/timeAgo.js"></script>
+    <script src="scripts/dashboard/filter/reverse.js"></script>
+    <script src="scripts/dashboard/controller/dashboard.js"></script>
+    <script src="scripts/app.js"></script>
+</head>
+<body ng-controller="DashboardController">
+<header>
+    <h1 title="Interval: {{options.interval}}s"><i class="icon-dashboard"></i> Dashboard</h1>
+</header>
+<main>
+    <div>
+        <article ng-repeat="cluster in clusters | orderBy:'order':false" class="db-cluster" data-cluster="{{cluster.id}}">
+            <header>
+                <span>{{cluster.display}}</span>
+                <abbr>{{cluster.id}}</abbr>
+            </header>
+            <div>
+                <section ng-repeat="host in cluster.hosts" class="db-host-container" data-host="{{host.id}}">
+                    <header>
+                        <span>
+                            <status-icon expr="host.states.available" eq-class="icon-link" ne-class="icon-unlink"></status-icon>
+                            {{host.display}}
+                        </span>
+                        <abbr>{{host.id}}</abbr>
+                        <span class="tools">
+                            <i ng-class="{'icon-chevron-sign-down': !host.states.collapsed, 'icon-chevron-sign-up': host.states.collapsed}" ng-click="host.states.collapsed=!host.states.collapsed;slide($event)"></i>
+                        </span>
+                    </header>
+                    <main class="db-host animate-slide slide-up" ng-class="{'hide': host.states.collapsed, 'db-host-with-error': host.states.error.message}">
+                        <article ng-repeat="module in host.modules"
+                                 class="db-module animate-flip-container"
+                                 ng-class="{'release-availability-unknown': !host.states.available || !module.data.available.release, 'release-availability-latest': host.states.available && module.data.release && module.data.release==module.data.available.release, 'release-availability-update': (module.data.available.release && module.data.release!=module.data.available.release)}"
+                                 data-module="{{module.id}}">
+                            <section class="front face" ng-class="{'flip': module.states.collapsed}">
+                                <header>
+                                    <span>
+                                        <status-icon expr="module.states.started" eq-class="icon-link" ne-class="icon-unlink"></status-icon>
+                                        {{module.display}}
+                                    </span>
+                                    <span class="release" ng-show="module.data.release">{{ module.data.release }}</span>
+                                    <span class="release" ng-hide="module.data.release">&nbsp;</span>
+                                </header>
+                                <main>
+                                    <ul class="metainfo">
+                                        <li class="time" ng-hide="module.updatedAt">
+                                            Not yet refreshed!
+                                        </li>
+                                        <li class="time" ng-show="module.updatedAt">
+                                            <time>{{module.updatedAt | date: 'HH:mm'}}</time>
+                                        </li>
+                                        <li class="host" ng-show="host.hostname">
+                                            {{host.hostname}}
+                                        </li>
+                                    </ul>
+                                    <form>
+                                        <fieldset>
+                                            <ul>
+                                                <li>Name: {{ module.id }}</li>
+                                                <li ng-show="!module.data.release || module.data.release!=module.data.available.release">
+                                                    <button ng-click="action($event, 'check')">Try check</button>
+                                                </li>
+                                            </ul>
+                                        </fieldset>
+                                    </form>
+                                </main>
+                                <footer>
+                                    <span class="settings">
+                                        <i class="icon-chevron-sign-right" ng-click="module.states.collapsed=module.states.collapsed;flip($event)"></i>
+                                    </span>
+                                    <span ng-hide="host.states.available">
+                                        <status-icon expr="!host.states.available" eq-class="icon-warning-sign" ne-class="icon-check-sign"></status-icon>
+                                        <span ng-show="host.states.available===false">Not reachable</span>
+                                        <span ng-show="host.states.available===undefined">Unknown</span>
+                                    </span>
+                                    <span ng-show="module.states.updating">
+                                        <status-icon expr="module.states.updating" eq-class="icon-spinner" ne-class="icon-ok" spinner-expr="true"></status-icon>
+                                        <span>Updating...</span>
+                                    </span>
+                                    <span ng-hide="!host.states.available || module.states.updating">
+                                        <status-icon expr="module.data.release && module.data.release==module.data.available.release" eq-class="icon-ok" ne-class="icon-frown"></status-icon>
+                                        <span ng-show="!module.data.release">Module not found.</span>
+                                        <span ng-show="module.data.release && !module.data.available.release">Module found, but no info about updates.</span>
+                                        <span ng-show="module.data.release && module.data.release==module.data.available.release">Everything up to date.</span>
+                                        <span ng-show="module.data.release && module.data.available.release && module.data.release!=module.data.available.release">Update available: {{module.data.available.release}}</span>
+                                    </span>
+                                </footer>
+                            </section>
+                            <section class="back face" ng-class="{'flip': module.states.collapsed}">
+                                <header>
+                                    <span>
+                                        <status-icon expr="module.states.started" eq-class="icon-link" ne-class="icon-unlink"></status-icon>
+                                        {{module.display}}
+                                    </span>
+                                    <span class="release" ng-show="module.data.release">{{ module.data.release }}</span>
+                                    <span class="release" ng-hide="module.data.release">&nbsp;</span>
+                                </header>
+                                <main>
+                                    <ul class="metainfo">
+                                        <li class="time" ng-hide="module.updatedAt">
+                                            Not yet refreshed!
+                                        </li>
+                                        <li class="time" ng-show="module.updatedAt">
+                                            Last refresh @ <time>{{module.updatedAt | date: 'dd.MM.y HH:mm:ss'}}</time>
+                                        </li>
+                                    </ul>
+                                    <form>
+                                        <fieldset>
+                                            <ul>
+                                                <li>Name: {{ module.id }}</li>
+                                                <li ng-show="module.data.release && module.data.release!=module.data.available.release">
+                                                    Available: <span class="version" ng-bind="module.data.available.version"></span>-<span class="build" ng-bind="module.data.available.build"></span>
+                                                    <button ng-click="action($event, 'update')">Update</button>
+                                                </li>
+                                                <li ng-show="module.data.release">
+                                                    Installed: <span class="version" ng-bind="module.data.version"></span>-<span class="build" ng-bind="module.data.build"></span>
+                                                    <button ng-click="action($event, 'check')">Try check</button>
+                                                </li>
+                                            </ul>
+                                        </fieldset>
+                                    </form>
+                                </main>
+                                <footer>
+                                    <span class="settings">
+                                        <i class="icon-chevron-sign-left" ng-click="module.states.collapsed=module.states.collapsed;flip($event)"></i>
+                                    </span>
+                                </footer>
+                            </section>
+                        </article>
+                        <footer class="error" ng-show="host.states.error" ng-switch="host.states.error.level+'/'+host.states.error.code">
+                            <span ng-switch-when="connection-socket/ENOTFOUND">
+                                <i class="icon-warning-sign"></i> Host <span ng-show="host.hostname">"{{host.hostname}}"</span> is not reachable!
+                            </span>
+                            <span ng-switch-default>
+                                <i class="icon-warning-sign"></i> {{ host.states.error.level }}/{{ host.states.error.code }}: {{ host.states.error.message }}
+                            </span>
+                        </footer>
+                    </main>
+                </section>
+            </div>
+        </article>
+    </div>
+</main>
+<footer class="server-{{server.state}}-state">
+    <div>
+        <span class="state" ng-click="stateWindow=!stateWindow">State: {{ server.state }}</span>
+        <ul ng-show="stateWindow" class="server-{{server.state}}-state">
+            <li ng-repeat="state in server.states | reverse">{{state.time|date:'HH:mm:ss'}}: {{state.state}}</li>
+        </ul>
+        <span class="time">Last sync was <span class="value" time-ago="{{lastSync}}"></span>s ago.</span>
+    </div>
+</footer>
+</body>
+</html>
