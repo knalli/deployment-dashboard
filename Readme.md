@@ -1,5 +1,7 @@
 # Deployment Dashboard
 
+![Overview](https://raw.github.com/knalli/deployment-dashboard/master/screenshot.png)
+
 ## Install requirements
 
 1. Install all dependencies via NPM: `npm install`.
